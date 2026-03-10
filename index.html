@@ -1,65 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Ebook Reader</title>
-    <!-- One single, highly reliable link that contains everything needed -->
-    <script src="https://unpkg.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-    <style>
-        body { font-family: sans-serif; margin: 0; background: #f9f9f9; display: flex; flex-direction: column; align-items: center; }
-        #viewer { width: 95vw; height: 85vh; background: white; border: 1px solid #ccc; margin-top: 10px; }
-        .controls { margin: 10px; }
-        button { padding: 10px 20px; cursor: pointer; border-radius: 4px; border: 1px solid #007bff; background: #007bff; color: white; }
-        #status { font-size: 14px; color: #555; padding: 10px; }
-    </style>
+<meta charset="UTF-8">
+<title>The Night of the Nutcracker</title>
+
+<script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f4f4f4;
+}
+
+#viewer{
+    width:100%;
+    height:90vh;
+}
+
+#controls{
+    text-align:center;
+    padding:10px;
+    background:#222;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    font-size:16px;
+}
+</style>
 </head>
+
 <body>
 
-<div id="status">Loading Reader...</div>
 <div id="viewer"></div>
 
-<div class="controls">
-    <button onclick="prev()">← Previous</button>
-    <button onclick="next()">Next →</button>
+<div id="controls">
+<button onclick="rendition.prev()">Previous</button>
+<button onclick="rendition.next()">Next</button>
 </div>
 
 <script>
-    var book, rendition;
+var book = ePub("the-night-of-the-nutcracker.epub");
 
-    function startReader() {
-        // Check if the library finally loaded
-        if (typeof ePub === 'undefined') {
-            document.getElementById('status').innerText = "Status: Still waiting for library...";
-            setTimeout(startReader, 1000); // Retry every second
-            return;
-        }
+var rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%"
+});
 
-        document.getElementById('status').innerText = "Status: Library Ready. Loading Book...";
-
-        try {
-            // MATCH YOUR FILENAME EXACTLY (No spaces, check capitals)
-            book = ePub("./the-night-of-the-nutcracker.epub");
-            
-            rendition = book.renderTo("viewer", {
-                width: "100%", height: "100%", flow: "paginated", manager: "default"
-            });
-
-            rendition.display().then(function() {
-                document.getElementById('status').innerText = "Status: Book Ready!";
-            }).catch(function(err) {
-                document.getElementById('status').innerText = "Status: Error loading .epub file. Check filename!";
-            });
-
-        } catch (e) {
-            document.getElementById('status').innerText = "Status: Reader Failed.";
-        }
-    }
-
-    function next() { if(rendition) rendition.next(); }
-    function prev() { if(rendition) rendition.prev(); }
-
-    window.onload = startReader;
+rendition.display();
 </script>
 
 </body>
