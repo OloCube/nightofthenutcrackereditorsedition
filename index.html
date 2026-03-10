@@ -2,19 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Ebook Reader</title>
-    
-    <!-- These links pull the "engine" from a reliable source so you don't need the extra files -->
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <!-- We move the scripts to the very top to ensure they load first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net"></script>
 
     <style>
-        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; background: #f4f4f4; }
-        #viewer { width: 90vw; height: 80vh; background: white; border: 1px solid #ccc; margin-top: 20px; }
-        .controls { margin: 20px; }
-        button { padding: 10px 25px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
-        button:hover { background: #0056b3; }
+        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; background: #f0f0f0; }
+        #viewer { width: 95vw; height: 80vh; background: white; border: 1px solid #ddd; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .controls { margin: 15px; display: flex; gap: 20px; }
+        button { padding: 12px 30px; font-size: 18px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background: white; }
+        button:hover { background: #e9e9e9; }
     </style>
 </head>
 <body>
@@ -22,14 +20,22 @@
     <div id="viewer"></div>
 
     <div class="controls">
-        <button id="prev">← Previous</button>
-        <button id="next">Next →</button>
+        <button id="prev">Back</button>
+        <button id="next">Next</button>
     </div>
 
     <script>
-        // This waits for the page to load before trying to find your book
-        document.addEventListener("DOMContentLoaded", function() {
-            // MATCH YOUR FILENAME EXACTLY (Case Sensitive!)
+        function startReader() {
+            // Check if the library actually loaded
+            if (typeof ePub === 'undefined') {
+                console.error("ePub library not found. Retrying in 1 second...");
+                setTimeout(startReader, 1000); // Try again if the internet was slow
+                return;
+            }
+
+            console.log("Library loaded! Starting book...");
+            
+            // EXACT FILENAME CHECK:
             var book = ePub("./the-night-of-the-nutcracker.epub");
             var rendition = book.renderTo("viewer", {
                 width: "100%",
@@ -38,19 +44,14 @@
                 manager: "default"
             });
 
-            var displayed = rendition.display();
+            rendition.display().catch(err => console.error("Display error:", err));
 
-            // Button Logic
-            document.getElementById("next").addEventListener("click", function(e) {
-                rendition.next();
-                e.preventDefault();
-            }, false);
+            document.getElementById("next").onclick = function() { rendition.next(); };
+            document.getElementById("prev").onclick = function() { rendition.prev(); };
+        }
 
-            document.getElementById("prev").addEventListener("click", function(e) {
-                rendition.prev();
-                e.preventDefault();
-            }, false);
-        });
+        // Run the script only after the window is fully ready
+        window.onload = startReader;
     </script>
 </body>
 </html>
