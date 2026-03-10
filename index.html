@@ -8,24 +8,23 @@
 <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 
 <style>
-body{
+body {
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
-#viewer{
+#viewer {
   width:100%;
   height:95vh;
-  border:1px solid #ccc;
 }
 
-#controls{
+#controls {
   text-align:center;
   padding:10px;
 }
 
-button{
-  padding:10px 20px;
+button {
+  padding:10px 15px;
   font-size:16px;
 }
 </style>
@@ -42,23 +41,30 @@ button{
 </div>
 
 <script>
-var book = ePub("the-night-of-the-nutcracker.epub");
 
-var rendition = book.renderTo("viewer", {
-  width: "100%",
-  height: "100%",
-  flow: "scrolled"
+fetch("the-night-of-the-nutcracker.epub")
+  .then(response => response.arrayBuffer())
+  .then(data => {
+
+    const book = ePub(data);
+
+    const rendition = book.renderTo("viewer", {
+      width: "100%",
+      height: "100%",
+      flow: "scrolled"
+    });
+
+    rendition.display();
+
+    document.getElementById("next").onclick = () => rendition.next();
+    document.getElementById("prev").onclick = () => rendition.prev();
+
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h2>Failed to load EPUB</h2><pre>" + err + "</pre>";
+
 });
 
-rendition.display();
-
-document.getElementById("next").onclick = function() {
-  rendition.next();
-};
-
-document.getElementById("prev").onclick = function() {
-  rendition.prev();
-};
 </script>
 
 </body>
