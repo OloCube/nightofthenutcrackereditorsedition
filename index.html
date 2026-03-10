@@ -5,22 +5,23 @@
 <meta charset="utf-8">
 <title>The Night of the Nutcracker</title>
 
+<!-- JSZip (required for EPUB files) -->
+
+<script src="https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js"></script>
+
+<!-- EPUB.js -->
+
 <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 
 <style>
-body {
+body{
   margin:0;
   font-family:Arial, sans-serif;
 }
 
-#viewer {
-  height:90vh;
+#viewer{
   width:100%;
-}
-
-#status {
-  padding:10px;
-  background:#eee;
+  height:95vh;
 }
 </style>
 
@@ -28,13 +29,10 @@ body {
 
 <body>
 
-<div id="status">Loading book...</div>
 <div id="viewer"></div>
 
 <script>
 window.onload = function () {
-
-  const status = document.getElementById("status");
 
   const book = ePub("the-night-of-the-nutcracker.epub");
 
@@ -43,11 +41,7 @@ window.onload = function () {
     height: "100%"
   });
 
-  rendition.display().then(() => {
-    status.innerText = "Book loaded.";
-  }).catch(err => {
-    status.innerText = "Error loading book: " + err;
-  });
+  rendition.display();
 
 };
 </script>
