@@ -8,26 +8,21 @@ window.onload = function () {
     height: "100%"
   });
 
-  const STORAGE_KEY = "nutcracker-progress";
+  // Load saved location
+  const savedLocation = localStorage.getItem("nutcracker-progress");
 
-  // Save location whenever page changes
+  if (savedLocation) {
+    rendition.display(savedLocation);
+  } else {
+    rendition.display();
+  }
+
+  // Save location whenever the reader moves
   rendition.on("relocated", function(location){
-    localStorage.setItem(STORAGE_KEY, location.start.cfi);
+    localStorage.setItem("nutcracker-progress", location.start.cfi);
   });
 
-  // Wait until the book is ready before restoring location
-  book.ready.then(function() {
-
-    const savedLocation = localStorage.getItem(STORAGE_KEY);
-
-    if (savedLocation) {
-      rendition.display(savedLocation);
-    } else {
-      rendition.display();
-    }
-
-  });
-
+  // Buttons
   document.getElementById("next").onclick = () => rendition.next();
   document.getElementById("prev").onclick = () => rendition.prev();
 
